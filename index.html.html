@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Calculator</title>
+    <!-- This script loads Tailwind CSS, which we use for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ---------------------------------
+           STEP 2: ADD STYLE WITH CSS
+           ---------------------------------
+           Even though we are using Tailwind, you could write
+           your own plain CSS here. For example:
+           
+           .calculator-body {
+               background-color: #f0f0f0;
+           }
+           
+           But Tailwind lets us do this in the HTML directly.
+           We'll add one custom style to make the buttons pop.
+        */
+        
+        /* A little extra style for a "pressed" effect on click */
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Make sure display text doesn't wrap and can scroll if too long */
+        .calculator-display {
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        /* Custom scrollbar for the display (optional but nice) */
+        .calculator-display::-webkit-scrollbar {
+            height: 3px;
+        }
+        .calculator-display::-webkit-scrollbar-thumb {
+            background: #9ca3af;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <!-- 
+       ---------------------------------
+       STEP 1: DEFINE THE STRUCTURE WITH HTML
+       ---------------------------------
+       This is the "skeleton" of the calculator.
+       I'm using Tailwind CSS classes (like "w-full", "bg-black", "rounded-2xl")
+       to style it at the same time.
+    -->
+    
+    <!-- Main container for the calculator -->
+    <div class="w-full max-w-xs bg-black rounded-2xl shadow-2xl p-5 border-2 border-gray-700">
+        
+        <!-- Display Screen -->
+        <div id="display" class="calculator-display w-full h-24 bg-gray-800 text-white text-right text-5xl font-mono p-4 rounded-lg mb-6 flex items-end justify-end">
+            0
+        </div>
+        
+        <!-- Button Grid -->
+        <div class="grid grid-cols-4 gap-3">
+            
+            <!-- Row 1 -->
+            <button data-action="clear" class="btn col-span-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">AC</button>
+            <button data-action="delete" class="btn bg-gray-600 hover:bg-gray-700 active:bg-gray-800 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">DEL</button>
+            <button data-action="operator" class="btn bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">/</button>
+            
+            <!-- Row 2 -->
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">7</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">8</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">9</button>
+            <button data-action="operator" class="btn bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">*</button>
+
+            <!-- Row 3 -->
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">4</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">5</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">6</button>
+            <button data-action="operator" class="btn bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">-</button>
+
+            <!-- Row 4 -->
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">1</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">2</button>
+            <button data-action="number" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">3</button>
+            <button data-action="operator" class="btn bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">+</button>
+
+            <!-- Row 5 -->
+            <button data-action="number" class="btn col-span-2 bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">0</button>
+            <button data-action="decimal" class="btn bg-gray-700 hover:bg-gray-800 active:bg-gray-900 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">.</button>
+            <button data-action="calculate" class="btn bg-green-500 hover:bg-green-600 active:bg-green-700 text-white text-3xl font-semibold rounded-lg shadow-md h-16 transition-all duration-150">=</button>
+        </div>
+        
+    </div>
+
+    <!-- 
+       ---------------------------------
+       STEP 3: IMPLEMENT THE LOGIC WITH JAVASCRIPT
+       ---------------------------------
+       This <script> tag is where we put the "brain" of the calculator.
+       It's best to put it at the very end of the <body> so that
+       all the HTML elements (like the buttons) exist before the
+       script tries to find them.
+    -->
+    <script>
+        // Wait for the whole HTML document to be loaded before running the script
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Get References to Elements ---
+            const display = document.getElementById('display');
+            const buttons = document.querySelectorAll('.btn');
+
+            // --- 3. Manage State ---
+            let currentOperand = '0'; // What's currently on the display
+            let previousOperand = ''; // The first number in an operation
+            let operation = null;     // The operator (+, -, etc.)
+            let justCalculated = false; // Flag to know if we just pressed '='
+
+            // --- 5. Update the Display Function ---
+            // A helper function to update the display's text.
+            function updateDisplay() {
+                display.innerText = currentOperand;
+                // Simple font size adjustment for long numbers
+                if (currentOperand.length > 9) {
+                    display.classList.add('text-4xl');
+                    display.classList.remove('text-5xl');
+                } else {
+                    display.classList.add('text-5xl');
+                    display.classList.remove('text-4xl');
+                }
+            }
+
+            // --- 4. Build the Logic (Functions) ---
+
+            function handleNumber(number) {
+                // If we just hit '=' and then press a number, start a new calculation
+                if (justCalculated) {
+                    currentOperand = number;
+                    justCalculated = false;
+                } else {
+                    // If '0' is on the display, replace it. Otherwise, add to it.
+                    currentOperand = currentOperand === '0' ? number : currentOperand + number;
+                }
+            }
+
+            function handleDecimal() {
+                // Prevent multiple decimal points
+                if (!currentOperand.includes('.')) {
+                    currentOperand += '.';
+                }
+            }
+
+            function handleOperator(op) {
+                // If there's already a number waiting, calculate it first
+                if (previousOperand !== '') {
+                    calculate();
+                }
+                
+                // Move the current number to be the "previous" one
+                operation = op;
+                previousOperand = currentOperand;
+                currentOperand = '0'; // Reset for the next number
+                justCalculated = false;
+            }
+            
+            function calculate() {
+                let result;
+                // Convert string numbers to actual numbers for math
+                const prev = parseFloat(previousOperand);
+                const current = parseFloat(currentOperand);
+
+                if (isNaN(prev) || isNaN(current)) return; // Do nothing if numbers aren't valid
+
+                // Use a switch to decide which math operation to perform
+                switch (operation) {
+                    case '+':
+                        result = prev + current;
+                        break;
+                    case '-':
+                        result = prev - current;
+                        break;
+                    case '*':
+                        result = prev * current;
+                        break;
+                    case '/':
+                        if (current === 0) {
+                            result = "Error"; // Handle division by zero
+                        } else {
+                            result = prev / current;
+                        }
+                        break;
+                    default:
+                        return; // Exit if no operation
+                }
+                
+                // Update state with the result
+                currentOperand = String(result);
+                operation = null;
+                previousOperand = '';
+                justCalculated = true; // Set the flag
+            }
+
+            function clear() {
+                currentOperand = '0';
+                previousOperand = '';
+                operation = null;
+                justCalculated = false;
+            }
+            
+            function del() {
+                // Remove the last character. If it becomes empty, set it to '0'.
+                currentOperand = currentOperand.slice(0, -1);
+                if (currentOperand.length === 0) {
+                    currentOperand = '0';
+                }
+            }
+
+            // --- 2. Handle Input (Event Listeners) ---
+            // Add a click listener to *every* button
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Get the 'data-action' from the HTML
+                    const action = button.dataset.action;
+                    const content = button.innerText;
+
+                    // Call the right function based on the button's action
+                    if (action === 'number') {
+                        handleNumber(content);
+                    } else if (action === 'decimal') {
+                        handleDecimal();
+                    } else if (action === 'operator') {
+                        handleOperator(content);
+                    } else if (action === 'calculate') {
+                        calculate();
+                    } else if (action === 'clear') {
+                        clear();
+                    } else if (action === 'delete') {
+                        del();
+                    }
+                    
+                    // Finally, update the display after every click
+                    updateDisplay();
+                });
+            });
+
+            // Initialize the display on first load
+            updateDisplay();
+        });
+    </script>
+</body>
+</html>
